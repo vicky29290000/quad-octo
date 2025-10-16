@@ -1,42 +1,66 @@
-# Quad Plus Architects Application
+# Quad Plus Architects - Role-Based Access Control System
 
 ## Setup Instructions
 
-1. **Clone the repository** and navigate to the project directory.
+### Prerequisites
+- Node.js 16+
+- PostgreSQL database
+- Supabase account
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+### Installation
 
-3. **Set up environment variables**:
-   - Copy `.env.local.example` to `.env.local`
-   - Fill in your Supabase project URL and anon key
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd quad-plus-architects
+```
 
-4. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+2. **Install dependencies**
+```bash
+npm install
+```
 
-## Features
+3. **Environment Setup**
+Create a `.env` file with:
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-- **Authentication**: Email/password login with role-based access
-- **File Uploads**: PDF and JPEG only, with metadata
-- **Role-Based Access Control**: 
-  - Super Admin: Full system access
-  - Admin: User and content management
-  - Architect: Project and client management
-  - Structural Team: Project access
-  - Client: File uploads and communication
+4. **Database Setup**
+Run the SQL migrations to create tables and set up Row-Level Security policies.
 
-- **Responsive Design**: Works on mobile, tablet, and desktop
+5. **Start the development server**
+```bash
+npm run dev
+```
 
-## Security
+### Features Implemented
 
-- Row-Level Security (RLS) on all database tables
-- File access restricted by user role
+- ✅ Role-based authentication (Super Admin, Admin, Architect, Structural Team, Client)
+- ✅ Row-Level Security (RLS) for data access control
+- ✅ File upload with type restriction (PDF, JPEG)
+- ✅ Responsive design with Tailwind CSS
+- ✅ Supabase integration for authentication and storage
+- ✅ Role-based dashboard components
+
+### File Structure
+```
+src/
+├── components/
+│   ├── Login.tsx
+│   ├── Dashboard.tsx
+│   ├── FileUpload.tsx
+│   ── role-specific dashboards
+├── contexts/
+│   └── AuthContext.tsx
+├── lib/
+│   └── supabase.ts
+└── App.tsx
+```
+
+### Security Features
+- Row-Level Security on all database tables
 - Authentication required for all operations
-
-## Deployment
-
-The application is ready to deploy to any platform supporting Next.js and PostgreSQL.
+- Role-based access control on frontend and backend
+- File type validation on upload

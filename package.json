@@ -1,7 +1,7 @@
 {
   "name": "quad-plus-architects",
   "version": "1.0.0",
-  "description": "Full-stack application for Quad Plus Architects with role-based access control",
+  "description": "Quad Plus Architects - Role-based access control system",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -10,15 +10,18 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "next": "^14.0.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "@supabase/supabase-js": "^2.0.0",
-    "@supabase/ssr": "^0.0.0",
-    "tailwindcss": "^3.3.0",
-    "autoprefixer": "^10.0.0",
-    "postcss": "^8.0.0",
-    "eslint": "^8.0.0",
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "@supabase/ssr": "^0.0.13",
+    "@supabase/supabase-js": "^2.38.0",
+    "lucide-react": "^0.294.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "typescript": "^5.0.0"
   }
 }

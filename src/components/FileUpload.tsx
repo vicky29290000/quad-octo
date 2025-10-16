@@ -1,60 +1,67 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 interface FileUploadProps {
-  packageId: string
-  onUpload: () => void
+  userRole: string
+  allowedFileTypes: string[]
 }
 
-export default function FileUpload({ packageId, onUpload }: FileUploadProps) {
+const FileUpload: React.FC<FileUploadProps> = ({ userRole, allowedFileTypes }) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
+  const handleFileUpload = async () => {
+    if (!selectedFile) return
+    
     setUploading(true)
-    const fileName = `${Date.now()}-${file.name}`
-    const { data, error } = await supabase.storage
-      .from('uploads')
-      .upload(fileName, file)
-
-    if (error) {
+    try {
+      const fileExt = selectedFile.name.split('.').pop()
+      const fileName = `${Math.random()}.${fileExt}`
+      
+      const { data, error } = await supabase.storage
+        .from('uploads')
+        .upload(fileName, selectedFile, {
+          cacheControl: '3600',
+          upsert: false
+        })
+      
+      if (error) throw error
+      
+      // Store file metadata in database
+      const { error: dbError } = await supabase
+        .from('uploads')
+        .insert({
+          filename: selectedFile.name,
+          size: selectedFile.size,
+          type: selectedFile.type,
+          uploaded_by: (await supabase.auth.getUser()).data.user?.id
+        })
+      
+      if (dbError) throw dbError
+      
+    } catch (error) {
       console.error('Upload error:', error)
+    } finally {
       setUploading(false)
-      return
     }
-
-    // Create upload record in database
-    const { data: uploadData, error: dbError } = await supabase
-      .from('uploads')
-      .insert({
-        name: file.name,
-        type: file.name.endsWith('.pdf') ? 'pdf' : 'jpeg',
-        uploaded_by: (await supabase.auth.getUser()).data.user?.id,
-        url: data?.path,
-        package_id: packageId,
-        version: '1.0', // You might want to generate this differently
-        date: new Date().toISOString(),
-      })
-
-    if (dbError) {
-      console.error('Database error:', dbError)
-    } else {
-      onUpload()
-    }
-    setUploading(false)
   }
 
   return (
     <div>
       <input
         type="file"
-        accept=".pdf,.jpeg,.jpg"
-        onChange={handleFileUpload}
-        disabled={uploading}
+        accept={allowedFileTypes.join(',')}
+        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
       />
-      {uploading && <p>Uploading...</p>}
+      <button
+        onClick={handleFileUpload}
+        disabled={uploading || !selectedFile}
+        className="px-4 py-2 bg-red-600 text-white rounded disabled:opacity-50"
+      >
+        {uploading ? 'Uploading...' : 'Upload File'}
+      </button>
     </div>
   )
 }
+
+export default FileUpload
