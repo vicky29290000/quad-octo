@@ -10,7 +10,10 @@ module.exports = {
         'quad-red': '#D62828',
         'quad-pink': '#F7CAC9',
         'quad-beige': '#F5F5DC',
-      }
+      },
+      borderColor: theme => ({
+        'border': theme('colors.quad-red'),
+      }),
     },
   },
   plugins: [],
